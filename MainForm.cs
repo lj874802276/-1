@@ -16,10 +16,16 @@ namespace DataAnalysisApp
         private string configFilePath = Path.Combine(Application.StartupPath, "config.txt");
         private DataTable allFilesTable = null; // 用于保存所有文件数据
 
-        private Panel panelSearch; // 搜索框容器
+        //private Panel panelSearch; // 搜索框容器
         private CheckBox chkSelectAll; // 全选/全不选
 
         private TextBox txtSearch; // 搜索框
+
+        // 分页相关字段
+        private int pageSize = 50; //默认每页显示50条，支持修改15、50、100、全部
+        private int pageIndex = 1;
+        private int pageCount = 1;
+        private DataTable pagedTable = null;
 
         public MainForm()
         {
@@ -570,6 +576,70 @@ namespace DataAnalysisApp
                 toolStripStatusLabel.Text = string.Format("文件加载失败：{0}", ex.Message);
                 lblTotalCount.Text = "当前合同总数：0";
             }
+
+            // 分页
+            allFilesTable = table;
+            pageIndex = 1;
+            RefreshPagedData();
+        }
+
+        // 分页刷新方法
+        private void RefreshPagedData()
+        {
+            if (allFilesTable == null) return;
+            int total = allFilesTable.Rows.Count;
+            pageCount = (pageSize == int.MaxValue) ? 1 : (int)Math.Ceiling(total * 1.0 / pageSize);
+            if (pageIndex < 1) pageIndex = 1;
+            if (pageIndex > pageCount) pageIndex = pageCount;
+
+            DataTable dt = allFilesTable.Clone();
+            if (pageSize == int.MaxValue)
+            {
+                foreach (DataRow row in allFilesTable.Rows)
+                    dt.ImportRow(row);
+            }
+            else
+            {
+                int start = (pageIndex - 1) * pageSize;
+                int end = Math.Min(start + pageSize, total);
+                for (int i = start; i < end; i++)
+                    dt.ImportRow(allFilesTable.Rows[i]);
+            }
+            pagedTable = dt;
+            dataGridView.DataSource = pagedTable;
+            toolStripPageInfo.Text = $"第{pageIndex}/{pageCount}页";
+        }
+
+        // 上一页
+        private void toolStripPrev_Click(object sender, EventArgs e)
+        {
+            if (pageIndex > 1)
+            {
+                pageIndex--;
+                RefreshPagedData();
+            }
+        }
+
+        // 下一页
+        private void toolStripNext_Click(object sender, EventArgs e)
+        {
+            if (pageIndex < pageCount)
+            {
+                pageIndex++;
+                RefreshPagedData();
+            }
+        }
+
+        // 每页条数变更
+        private void toolStripPageSize_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            string sel = toolStripPageSize.SelectedItem.ToString();
+            if (sel == "全部")
+                pageSize = int.MaxValue;
+            else
+                pageSize = int.Parse(sel);
+            pageIndex = 1;
+            RefreshPagedData();
         }
 
         private void ApplyFilter()

@@ -32,6 +32,10 @@ namespace DataAnalysisApp
             this.toolStripTotalCount = new System.Windows.Forms.ToolStripStatusLabel();
             this.lblTotalCount = new System.Windows.Forms.Label();
             this.btnSettings = new System.Windows.Forms.Button(); // 添加设置按钮
+            this.toolStripPageInfo = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripPrev = new System.Windows.Forms.ToolStripButton();
+            this.toolStripNext = new System.Windows.Forms.ToolStripButton();
+            this.toolStripPageSize = new System.Windows.Forms.ToolStripComboBox();
             this.panelTop.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView)).BeginInit();
             this.statusStrip.SuspendLayout();
@@ -169,6 +173,33 @@ namespace DataAnalysisApp
             this.toolStripTotalCount.Size = new System.Drawing.Size(120, 17);
             this.toolStripTotalCount.Text = "当前合同总数：0";
 
+            // toolStripPrev
+            this.toolStripPrev.Text = "上一页";
+            this.toolStripPrev.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            this.toolStripPrev.Click += new System.EventHandler(this.toolStripPrev_Click);
+
+            // toolStripNext
+            this.toolStripNext.Text = "下一页";
+            this.toolStripNext.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            this.toolStripNext.Click += new System.EventHandler(this.toolStripNext_Click);
+
+            // toolStripPageInfo
+            this.toolStripPageInfo.Text = "第1/1页";
+
+            // toolStripPageSize
+            this.toolStripPageSize.Items.AddRange(new object[] { "15", "50", "100", "全部" });
+            this.toolStripPageSize.DropDownStyle = ComboBoxStyle.DropDownList;
+            this.toolStripPageSize.SelectedIndex = 0;
+            this.toolStripPageSize.SelectedIndexChanged += new System.EventHandler(this.toolStripPageSize_SelectedIndexChanged);
+
+            // 添加到 statusStrip
+            this.statusStrip.Items.Add(new ToolStripStatusLabel(" | "));
+            this.statusStrip.Items.Add(this.toolStripPrev);
+            this.statusStrip.Items.Add(this.toolStripNext);
+            this.statusStrip.Items.Add(this.toolStripPageInfo);
+            this.statusStrip.Items.Add(new ToolStripStatusLabel("每页显示:"));
+            this.statusStrip.Items.Add(this.toolStripPageSize);
+
             // MainForm
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -204,6 +235,10 @@ namespace DataAnalysisApp
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel;
         private System.Windows.Forms.ToolStripStatusLabel toolStripTotalCount;
         private System.Windows.Forms.Label lblTotalCount;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripPageInfo;
+        private System.Windows.Forms.ToolStripButton toolStripPrev;
+        private System.Windows.Forms.ToolStripButton toolStripNext;
+        private System.Windows.Forms.ToolStripComboBox toolStripPageSize;
 
         // NativeMethods.CreateRoundRectRgn 需引入 Win32 API
         internal class NativeMethods
